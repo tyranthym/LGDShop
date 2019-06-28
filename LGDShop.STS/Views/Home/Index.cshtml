@@ -1,0 +1,25 @@
+﻿@using Microsoft.Extensions.Options
+@using StsServerIdentity.Models
+@{
+    ViewData["Title"] = "StsServerIdentity Home";
+}
+@inject IOptions<StsConfig> OptionsStsConfig
+
+<div>
+    @if (User.Identity.IsAuthenticated)
+    {
+        <h1>Hi @User.Identity.Name</h1>
+    }
+    else
+    {
+        <br />
+    }
+</div>
+
+<div style="margin-top: 20px;">
+    <a href="@OptionsStsConfig.Value.ClientUrl">
+        ClientUrl
+    </a>
+</div>
+
+
