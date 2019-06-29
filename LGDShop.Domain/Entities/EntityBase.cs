@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Domain.Entities
+namespace LGDShop.Domain.Entities
 {
     public class EntityBase : IEntityBase
     {

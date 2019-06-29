@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace Domain.Entities
+namespace LGDShop.Domain.Entities
 {
     public class Employee : EntityBase
     {

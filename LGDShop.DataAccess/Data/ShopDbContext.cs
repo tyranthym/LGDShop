@@ -1,10 +1,10 @@
-﻿using Domain.Entities;
+﻿using LGDShop.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace DataAccess.Data
+namespace LGDShop.DataAccess.Data
 {
     public class ShopDbContext : DbContext
     {

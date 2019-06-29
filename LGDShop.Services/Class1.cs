@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Services
+namespace LGDShop.Services
 {
     public class Class1
     {
