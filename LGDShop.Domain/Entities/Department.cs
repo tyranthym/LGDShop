@@ -5,13 +5,13 @@ using System.Text;
 
 namespace LGDShop.Domain.Entities
 {
-    public class Position
+    public class Department
     {
         [Key]
-        public int PositionId { get; set; }   //pk
+        public int DepartmentId { get; set; }   //pk
 
-        public int Rank { get; set; }     // higher number = higher rank
         public string Name { get; set; }
+
 
         //navigation property
         public virtual ICollection<Employee> Employees { get; set; }

@@ -13,9 +13,14 @@ namespace LGDShop.Domain.Entities
         public string Name { get; set; }
         public int Age { get; set; }
 
-        public int PositionId { get; set; }   //fk
+        [Phone]
+        public string PhoneNumber { get; set; }
+
+        public int? DepartmentId { get; set; }   //fk
+        public int? PositionId { get; set; }   //fk
 
         //navigation property 
+        public virtual Department Department { get; set; }
         public virtual Position Position { get; set; }
     }
 }

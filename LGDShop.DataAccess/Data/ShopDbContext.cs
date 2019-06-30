@@ -19,6 +19,7 @@ namespace LGDShop.DataAccess.Data
         }
 
         public DbSet<Employee> Employees { get; set; }
+        public DbSet<Department> Departments { get; set; }
         public DbSet<Position> Positions { get; set; }
 
 

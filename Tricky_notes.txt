@@ -1,0 +1,9 @@
+asp.net core 2.2
+
+1. ef core
+
+when using .AsNoTracking() together with .Include(emp => emp.Department) which emp.Department can be null, emp.Department is not populated correctly.
+Any place used emp.Department afterward will throw exception
+
+
+walkaround: check DepartmentId == null first, if it's null just set the target directly to null instead using emp.Department?.Name 

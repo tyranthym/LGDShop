@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
+using FluentValidation.AspNetCore;
 using LGDShop.DataAccess.Data;
+using LGDShop.Services.EntityServices;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -12,6 +15,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace LGDShop.API
@@ -37,8 +41,16 @@ namespace LGDShop.API
                 c.SwaggerDoc("v1", new Info { Title = "龙广电台商城 - API", Version = "v1" });
             });
 
+            services.AddMvc()
+                .AddFluentValidation()
+                .AddJsonOptions(options =>
+                {
+                    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                })
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            //app services
+            services.AddScoped<IEmployeeService, EmployeeService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -57,13 +69,17 @@ namespace LGDShop.API
             app.UseHttpsRedirection();
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
-            app.UseSwagger();
+            app.UseSwagger(o =>
+            {
+                o.RouteTemplate = "docs/{documentName}/docs.json";
+            });
 
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
             // specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(o =>
             {
-                o.SwaggerEndpoint("/swagger/v1/swagger.json", "龙广交通商城 - API");
+                o.SwaggerEndpoint("/docs/v1/docs.json", "龙广交通商城 - API");
+                o.RoutePrefix = "docs";
             });
 
             app.UseMvc();

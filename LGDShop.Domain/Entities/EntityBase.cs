@@ -8,7 +8,7 @@ namespace LGDShop.Domain.Entities
     {
         public DateTime CreatedAt { get; set; }
         public bool IsDeleted { get; set; }
-        public DateTime DeletedAt { get; set; }
+        public DateTime? DeletedAt { get; set; }
     }
 
     public interface IEntityBase
@@ -16,7 +16,7 @@ namespace LGDShop.Domain.Entities
         DateTime CreatedAt { get; set; }
 
         bool IsDeleted { get; set; }
-        DateTime DeletedAt { get; set; }
+        DateTime? DeletedAt { get; set; }
 
     }
 }
