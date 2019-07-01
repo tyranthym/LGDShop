@@ -34,11 +34,13 @@ namespace LGDShop.API.Controllers.V1
                 .AsNoTracking()
                 .Take(10)
                 .ToListAsync();
+
+            //map to response
             List<EmployeeGetAllResponseIndividual> employeeGetAllResponse = EmployeeMapper.MapFromEmployeesToEmployeeGetAllResponse(employees);
             return Ok(employeeGetAllResponse);
         }
 
-        [HttpGet("{id}", Name = "CreateEmployee")]
+        [HttpGet("{id}", Name = "GetEmployeeById")]
         public async Task<IActionResult> GetById(int? id)
         {
             if (id == null)
@@ -61,11 +63,55 @@ namespace LGDShop.API.Controllers.V1
                 return BadRequest(ModelState);
             }
 
+            //map to entity
             Employee employee = EmployeeMapper.MapFromEmployeeCreateRequestToEmployee(requestModel);
             db.Employees.Add(employee);
             await db.SaveChangesAsync();
 
-            return CreatedAtRoute("CreateEmployee", new { id = employee.EmployeeId }, null);
+            return CreatedAtRoute("GetEmployeeById", new { id = employee.EmployeeId }, null);
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> Update([FromBody] EmployeeUpdateRequest requestModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            Employee employee = await employeeService.FindEmployeeAsync(requestModel.Id);
+            if (employee == null)
+            {
+                return NotFound($"{nameof(Employee)} was not found");
+            }
+
+            EmployeeMapper.MapFromEmployeeUpdateRequestToEmployee(employee, requestModel);
+            db.Employees.Update(employee);
+            await db.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return BadRequest("id not provided!");
+            }
+            Employee employee = await employeeService.FindEmployeeAsync(id);
+            if (employee == null)
+            {
+                return NotFound($"{nameof(Employee)} was not found");
+            }
+
+            //soft delete employee
+            employee.IsDeleted = true;
+            employee.DeletedAt = DateTime.UtcNow;
+            db.Employees.Update(employee);
+            await db.SaveChangesAsync();
+
+            return NoContent();
         }
     }
 }

@@ -11,6 +11,11 @@ namespace LGDShop.API.ModelMapper.V1
     public static class EmployeeMapper
     {
         //create employee
+        /// <summary>
+        /// entity to add: Employee
+        /// </summary>
+        /// <param name="employeeCreateRequest"></param>
+        /// <returns></returns>
         public static Employee MapFromEmployeeCreateRequestToEmployee(EmployeeCreateRequest employeeCreateRequest)
         {
             Employee employee = new Employee
@@ -27,7 +32,7 @@ namespace LGDShop.API.ModelMapper.V1
             return employee;
         }
 
-        //multiple
+        //get all
         public static List<EmployeeGetAllResponseIndividual> MapFromEmployeesToEmployeeGetAllResponse(List<Employee> employees)
         {
             List<EmployeeGetAllResponseIndividual> employeeGetAllResponse = new List<EmployeeGetAllResponseIndividual>();
@@ -52,6 +57,24 @@ namespace LGDShop.API.ModelMapper.V1
                 Position = positionId == null ? null : employee.Position?.Name,
             };
             return employeeGetAllResponseIndividual;
+        }
+
+        //update employee
+        /// <summary>
+        /// entity to modify: Employee
+        /// </summary>
+        /// <param name="employee"></param>
+        /// <param name="employeeUpdateRequest"></param>
+        /// <returns></returns>
+        public static Employee MapFromEmployeeUpdateRequestToEmployee(Employee employee, EmployeeUpdateRequest employeeUpdateRequest)
+        {
+            employee.Name = employeeUpdateRequest.Name;
+            employee.Age = employeeUpdateRequest.Age;
+            employee.PhoneNumber = employeeUpdateRequest.PhoneNumber;
+            employee.DepartmentId = employeeUpdateRequest.DepartmentId;
+            employee.PositionId = employeeUpdateRequest.PositionId;
+
+            return employee;
         }
     }
 }

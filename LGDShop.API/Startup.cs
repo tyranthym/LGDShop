@@ -41,8 +41,9 @@ namespace LGDShop.API
                 c.SwaggerDoc("v1", new Info { Title = "龙广电台商城 - API", Version = "v1" });
             });
 
+            var assembly = Assembly.GetAssembly(typeof(Startup));
             services.AddMvc()
-                .AddFluentValidation()
+                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssembly(assembly))
                 .AddJsonOptions(options =>
                 {
                     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
