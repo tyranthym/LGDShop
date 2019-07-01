@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -39,6 +40,12 @@ namespace LGDShop.API
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "龙广电台商城 - API", Version = "v1" });
+
+                // Set the comments path for the Swagger JSON and UI.
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var baseDirectory = AppContext.BaseDirectory;
+                var xmlPath = Path.Combine(baseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
             });
 
             var assembly = Assembly.GetAssembly(typeof(Startup));

@@ -25,6 +25,10 @@ namespace LGDShop.API.Controllers.V1
             this.employeeService = employeeService;
         }
 
+        /// <summary>
+        /// Get first 10 employees
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -40,6 +44,11 @@ namespace LGDShop.API.Controllers.V1
             return Ok(employeeGetAllResponse);
         }
 
+        /// <summary>
+        /// Get single employee by id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}", Name = "GetEmployeeById")]
         public async Task<IActionResult> GetById(int? id)
         {
@@ -55,7 +64,14 @@ namespace LGDShop.API.Controllers.V1
             return Ok(employee);
         }
 
+        /// <summary>
+        /// Create new employee
+        /// </summary>
+        /// <param name="requestModel"></param>
+        /// <returns></returns>
+        /// <response code="201">new employee has been created successfully</response>
         [HttpPost]
+        [ProducesResponseType(201)]
         public async Task<IActionResult> Create([FromBody] EmployeeCreateRequest requestModel)
         {
             if (!ModelState.IsValid)
@@ -71,7 +87,14 @@ namespace LGDShop.API.Controllers.V1
             return CreatedAtRoute("GetEmployeeById", new { id = employee.EmployeeId }, null);
         }
 
+        /// <summary>
+        /// Update existing employee
+        /// </summary>
+        /// <param name="requestModel"></param>
+        /// <returns></returns>
+        /// <response code="204">employee has been updated successfully</response>
         [HttpPut]
+        [ProducesResponseType(204)]
         public async Task<IActionResult> Update([FromBody] EmployeeUpdateRequest requestModel)
         {
             if (!ModelState.IsValid)
@@ -92,7 +115,14 @@ namespace LGDShop.API.Controllers.V1
             return NoContent();
         }
 
+        /// <summary>
+        /// Delete employee
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        /// <response code="204">employee has been deleted successfully</response>
         [HttpDelete("{id}")]
+        [ProducesResponseType(204)]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
