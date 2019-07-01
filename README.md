@@ -10,6 +10,7 @@ An ASP.NET CORE 2.2 webapi + identity server 4 project
 
 **1.** Start `LGDShop.API` project.
   - **Important:** This must be running on https://localhost:44344/
+
 **2.** Start `StsServerIdentity` project.
   - **Important:** This must be running on https://localhost:44318/
 

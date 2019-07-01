@@ -53,7 +53,8 @@ namespace LGDShop.API
                 .AddFluentValidation(fv => fv.RegisterValidatorsFromAssembly(assembly))
                 .AddJsonOptions(options =>
                 {
-                    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;  //to prevent reference loops from happening
+                    options.SerializerSettings.Formatting = Formatting.Indented;    //For pretty print Swagger JSON
                 })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
@@ -88,6 +89,7 @@ namespace LGDShop.API
             {
                 o.SwaggerEndpoint("/docs/v1/docs.json", "龙广交通商城 - API");
                 o.RoutePrefix = "docs";
+                o.DisplayOperationId();
             });
 
             app.UseMvc();
