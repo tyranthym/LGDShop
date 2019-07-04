@@ -8,12 +8,14 @@ using LGDShop.API.Models.V1.Responses;
 using LGDShop.DataAccess.Data;
 using LGDShop.Domain.Entities;
 using LGDShop.Services.EntityServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace LGDShop.API.Controllers.V1
 {
+    [Authorize]
     public class EmployeesController : ApiControllerV1BaseController
     {
         private readonly ShopDbContext db;

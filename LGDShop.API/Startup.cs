@@ -5,6 +5,8 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using FluentValidation.AspNetCore;
+using IdentityServer4.AccessTokenValidation;
+using LGDShop.API.Filter;
 using LGDShop.DataAccess.Data;
 using LGDShop.Services.EntityServices;
 using Microsoft.AspNetCore.Builder;
@@ -17,6 +19,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using StsServerIdentity;
+using StsServerIdentity.Models;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace LGDShop.API
@@ -36,10 +40,36 @@ namespace LGDShop.API
             services.AddDbContext<ShopDbContext>(options =>
                 options.UseLazyLoadingProxies().UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
+            services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
+                    .AddIdentityServerAuthentication(options =>
+                    {
+                        // auth server base endpoint (will use to search for disco doc)
+                        options.Authority = "http://localhost:5000";
+                        options.ApiName = IdentityServerConfig.ApiName; // required audience of access tokens
+                        options.RequireHttpsMetadata = false; // dev only!
+                    });
+
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "龙广电台商城 - API", Version = "v1" });
+                c.OperationFilter<AuthorizeCheckOperationFilter>();
+                c.AddSecurityDefinition("oauth2", new OAuth2Scheme
+                {
+                    Type = "oauth2",
+                    Flow = "application",
+                    TokenUrl = "http://localhost:5000/connect/token",
+                    Scopes = new Dictionary<string, string>
+                    {
+                          { ApiScopes.General, "Access general operations" }
+                    }
+                });
+
+                c.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>>
+                {
+                    { "oauth2", new[] { "readAccess", "writeAccess" } }
+                });
+
 
                 // Set the comments path for the Swagger JSON and UI.
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
@@ -75,7 +105,7 @@ namespace LGDShop.API
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger(o =>
@@ -87,11 +117,16 @@ namespace LGDShop.API
             // specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(o =>
             {
+                //crediential 
+                o.OAuthClientId(IdentityServerConfig.ApiSwaggerClientID);
+                o.OAuthClientSecret(IdentityServerConfig.ApiSwaggerClientSecret); //Leaving it blank doesn't work
+
+                o.DocumentTitle = "Swagger UI - 龙广交通商城";
                 o.SwaggerEndpoint("/docs/v1/docs.json", "龙广交通商城 - API");
                 o.RoutePrefix = "docs";
                 o.DisplayOperationId();
             });
-
+            app.UseAuthentication();
             app.UseMvc();
         }
     }

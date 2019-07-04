@@ -115,6 +115,11 @@ namespace StsServerIdentity
                     options.RequestCultureProviders.Insert(0, providerQuery);
                 });
 
+            services.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader()));
+
+
             services.AddMvc(options =>
             {
                 options.Filters.Add(new SecurityHeadersAttribute());
@@ -135,9 +140,9 @@ namespace StsServerIdentity
 
             services.AddIdentityServer()
                 .AddSigningCredential(cert)
-                .AddInMemoryIdentityResources(Config.GetIdentityResources())
-                .AddInMemoryApiResources(Config.GetApiResources())
-                .AddInMemoryClients(Config.GetClients(stsConfig))
+                .AddInMemoryIdentityResources(IdentityServerConfig.GetIdentityResources())
+                .AddInMemoryApiResources(IdentityServerConfig.GetApiResources())
+                .AddInMemoryClients(IdentityServerConfig.GetClients(stsConfig))
                 .AddAspNetIdentity<ApplicationUser>()
                 .AddProfileService<IdentityWithAdditionalClaimsProfileService>();
         }
@@ -173,7 +178,7 @@ namespace StsServerIdentity
 
             var locOptions = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>();
             app.UseRequestLocalization(locOptions.Value);
-
+            app.UseCors("AllowAll");
             app.UseStaticFiles(new StaticFileOptions()
             {
                 OnPrepareResponse = context =>

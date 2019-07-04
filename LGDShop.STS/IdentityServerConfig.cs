@@ -1,0 +1,137 @@
+﻿// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+using IdentityModel;
+using IdentityServer4.Models;
+using Microsoft.Extensions.Configuration;
+using StsServerIdentity.Models;
+using System.Collections.Generic;
+
+namespace StsServerIdentity
+{
+    public class IdentityServerConfig
+    {
+        public const string ApiName = "lgdshop_api";
+        public const string ApiFriendlyName = "GLDShop API";
+        public const string ApiSecret = "longguangdianshop";
+
+        public const string AngularAppClientID = "angular_spa";
+        public const string AngularAppClientSecret = "angular_spa";
+
+        public const string ApiSwaggerClientID = "api_swagger_ui";
+        public const string ApiSwaggerClientSecret = "apiswaggeruisecret";
+
+        public static IEnumerable<IdentityResource> GetIdentityResources()
+        {
+            List<IdentityResource> resources = new List<IdentityResource>
+            {
+                new IdentityResources.OpenId(),
+                new IdentityResources.Profile(),
+                new IdentityResources.Email()
+            };
+            return resources;
+        }
+
+        public static IEnumerable<ApiResource> GetApiResources()
+        {
+            return new List<ApiResource>
+            {
+                new ApiResource(ApiName, ApiFriendlyName)
+                {
+                    ApiSecrets =
+                    {
+                        new Secret(ApiSecret.Sha256())
+                    },
+                    Scopes =
+                    {
+                        new Scope
+                        {
+                            Name = ApiScopes.General,
+                            DisplayName = "Scope for the general access in api"
+                        }
+                    },
+                    UserClaims = { JwtClaimTypes.Role, "admin", "user", ApiClaims.General }
+                }
+            };
+        }
+
+        public static IEnumerable<Client> GetClients(IConfigurationSection stsConfig)
+        {
+            // TODO use configs in app
+            //var yourConfig = stsConfig["ClientUrl"];
+
+            return new List<Client>
+            {
+                new Client {
+                    RequireConsent = false,
+                    ClientId = AngularAppClientID,
+                    ClientName = "Angular SPA",
+                    AllowedGrantTypes = GrantTypes.Implicit,
+                    AllowedScopes = { "openid", "profile", "email", "api.general"},
+                    RedirectUris = {"http://localhost:4200/auth-callback"},
+                    PostLogoutRedirectUris = {"http://localhost:4200/"},
+                    AllowedCorsOrigins = new List<string>
+                    {
+                        "http://localhost:4200",
+                        "https://localhost:4200"
+                    },
+                    AllowAccessTokensViaBrowser = true,
+                    RequireClientSecret = false, // This client does not need a secret to request tokens from the token endpoint.
+                    AccessTokenLifetime = 300
+                },
+                new Client
+                {
+                    ClientId = ApiSwaggerClientID,
+                    ClientName = "Swagger UI for API",
+                    ClientSecrets =
+                    {
+                        new Secret(ApiSwaggerClientSecret.Sha256())
+                    },
+                    AllowedGrantTypes = GrantTypes.ClientCredentials,
+                    AllowAccessTokensViaBrowser = true,
+                    RequireClientSecret = true,
+
+                    AllowedScopes = {
+                        ApiScopes.General
+                    }
+                }
+
+
+                // example code
+                //new Client
+                //{
+                //    ClientName = "angularclient",
+                //    ClientId = "angularclient",
+                //    AccessTokenType = AccessTokenType.Reference,
+                //    AccessTokenLifetime = 330,// 330 seconds, default 60 minutes
+                //    IdentityTokenLifetime = 30,
+                //    AllowedGrantTypes = GrantTypes.Implicit,
+                //    AllowAccessTokensViaBrowser = true,
+                //    RedirectUris = new List<string>
+                //    {
+                //        "https://localhost:44311",
+                //        "https://localhost:44311/silent-renew.html"
+
+                //    },
+                //    PostLogoutRedirectUris = new List<string>
+                //    {
+                //        "https://localhost:44311/unauthorized",
+                //        "https://localhost:44311"
+                //    },
+                //    AllowedCorsOrigins = new List<string>
+                //    {
+                //        "https://localhost:44311",
+                //        "http://localhost:44311"
+                //    },
+                //    AllowedScopes = new List<string>
+                //    {
+                //        "openid",
+                //        "role",
+                //        "profile",
+                //        "email"
+                //    }
+                //}
+            };
+        }
+    }
+}

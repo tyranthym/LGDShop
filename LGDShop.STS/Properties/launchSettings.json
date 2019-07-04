@@ -7,8 +7,8 @@
       "sslPort": 0
     },
     "iisExpress": {
-      "applicationUrl": "https://localhost:44318/",
-      "sslPort": 44318
+      "applicationUrl": "http://localhost:5000",
+      "sslPort": 0
     }
   },
   "profiles": {
@@ -24,7 +24,7 @@
     "StsServerIdentity": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "http://localhost:44318",
+      "launchUrl": "http://localhost:5000",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
