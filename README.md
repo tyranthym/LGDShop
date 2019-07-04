@@ -16,5 +16,9 @@ An ASP.NET CORE 2.2 webapi + identity server 4 project
 
 **3.** Start any SPA project.
   - **Important:** This must be running on http://localhost:4200 or https://localhost:4200 (valid certificate)
+  
+## Branch
+
+Don't touch master branch, use develop instead 
 
 
