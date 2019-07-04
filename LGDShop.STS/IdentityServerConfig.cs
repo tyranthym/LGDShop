@@ -67,7 +67,7 @@ namespace StsServerIdentity
                     ClientId = AngularAppClientID,
                     ClientName = "Angular SPA",
                     AllowedGrantTypes = GrantTypes.Implicit,
-                    AllowedScopes = { "openid", "profile", "email", "api.general"},
+                    AllowedScopes = { "openid", "profile", "email", ApiScopes.General},
                     RedirectUris = {"http://localhost:4200/auth-callback"},
                     PostLogoutRedirectUris = {"http://localhost:4200/"},
                     AllowedCorsOrigins = new List<string>
@@ -79,18 +79,20 @@ namespace StsServerIdentity
                     RequireClientSecret = false, // This client does not need a secret to request tokens from the token endpoint.
                     AccessTokenLifetime = 300
                 },
-                new Client
+                new Client           //swagger ui client
                 {
+                    RequireConsent = false,
                     ClientId = ApiSwaggerClientID,
                     ClientName = "Swagger UI for API",
-                    ClientSecrets =
-                    {
-                        new Secret(ApiSwaggerClientSecret.Sha256())
-                    },
-                    AllowedGrantTypes = GrantTypes.ClientCredentials,
+                    AllowedGrantTypes = GrantTypes.Implicit,
+                    RedirectUris = { "http://localhost:5001/docs/oauth2-redirect.html" },
                     AllowAccessTokensViaBrowser = true,
-                    RequireClientSecret = true,
-
+                    RequireClientSecret = false,
+                    //AllowedCorsOrigins = new List<string> //inside web-api
+                    //{
+                    //    "http://localhost:5001",
+                    //    "https://localhost:44344"
+                    //},
                     AllowedScopes = {
                         ApiScopes.General
                     }

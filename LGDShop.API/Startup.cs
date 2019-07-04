@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using FluentValidation.AspNetCore;
 using IdentityServer4.AccessTokenValidation;
 using LGDShop.API.Filter;
+using LGDShop.API.Options;
 using LGDShop.DataAccess.Data;
 using LGDShop.Services.EntityServices;
 using Microsoft.AspNetCore.Builder;
@@ -57,7 +58,8 @@ namespace LGDShop.API
                 c.AddSecurityDefinition("oauth2", new OAuth2Scheme
                 {
                     Type = "oauth2",
-                    Flow = "application",
+                    Flow = "implicit",
+                    AuthorizationUrl = "http://localhost:5000/connect/authorize",
                     TokenUrl = "http://localhost:5000/connect/token",
                     Scopes = new Dictionary<string, string>
                     {
@@ -65,10 +67,10 @@ namespace LGDShop.API
                     }
                 });
 
-                c.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>>
-                {
-                    { "oauth2", new[] { "readAccess", "writeAccess" } }
-                });
+                //c.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>>
+                //{
+                //    { "oauth2", new[] { "readAccess", "writeAccess" } }
+                //});
 
 
                 // Set the comments path for the Swagger JSON and UI.
@@ -77,6 +79,13 @@ namespace LGDShop.API
                 var xmlPath = Path.Combine(baseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);
             });
+
+            services.AddCors(options => options.AddPolicy("SpaOnly", b =>
+                        b.WithOrigins("http://localhost:4300",
+                                      "https://localhost:4300")
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()));
+
 
             var assembly = Assembly.GetAssembly(typeof(Startup));
             services.AddMvc()
@@ -103,9 +112,11 @@ namespace LGDShop.API
             {
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
+                app.UseHttpsRedirection();
             }
 
-            //app.UseHttpsRedirection();
+            app.UseCors("SpaOnly");
+
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger(o =>
@@ -120,6 +131,7 @@ namespace LGDShop.API
                 //crediential 
                 o.OAuthClientId(IdentityServerConfig.ApiSwaggerClientID);
                 o.OAuthClientSecret(IdentityServerConfig.ApiSwaggerClientSecret); //Leaving it blank doesn't work
+                o.OAuthAppName(SwaggerConfig.OAuthAppName);
 
                 o.DocumentTitle = "Swagger UI - 龙广交通商城";
                 o.SwaggerEndpoint("/docs/v1/docs.json", "龙广交通商城 - API");

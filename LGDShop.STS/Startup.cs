@@ -44,7 +44,7 @@ namespace StsServerIdentity
             var useLocalCertStore = Convert.ToBoolean(Configuration["UseLocalCertStore"]);
             var certificateThumbprint = Configuration["CertificateThumbprint"];
 
-            X509Certificate2 cert;
+            X509Certificate2 cert = null;
 
             if (_environment.IsProduction())
             {
@@ -74,7 +74,7 @@ namespace StsServerIdentity
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseLazyLoadingProxies().UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.Configure<StsConfig>(Configuration.GetSection("StsConfig"));
+            services.Configure<StsConfig>(stsConfig);
             services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
 
             services.AddSingleton<LocService>();
@@ -115,9 +115,13 @@ namespace StsServerIdentity
                     options.RequestCultureProviders.Insert(0, providerQuery);
                 });
 
-            services.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin()
-               .AllowAnyMethod()
-               .AllowAnyHeader()));
+            //services.AddCors(options => options.AddPolicy("SelfOwner", b =>
+            //        b.WithOrigins("http://localhost:4200",
+            //                      "https://localhost:4200",
+            //                      "http://localhost:5001",
+            //                      "https://localhost:44344")
+            //         .AllowAnyMethod()
+            //         .AllowAnyHeader()));
 
 
             services.AddMvc(options =>
@@ -175,10 +179,10 @@ namespace StsServerIdentity
                 .ScriptSources(s => s.Self())
                 .ScriptSources(s => s.UnsafeInline())
             );
+            //app.UseCors("SelfOwner");
 
             var locOptions = app.ApplicationServices.GetService<IOptions<RequestLocalizationOptions>>();
             app.UseRequestLocalization(locOptions.Value);
-            app.UseCors("AllowAll");
             app.UseStaticFiles(new StaticFileOptions()
             {
                 OnPrepareResponse = context =>

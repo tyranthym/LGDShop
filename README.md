@@ -12,5 +12,9 @@ An ASP.NET CORE 2.2 webapi + identity server 4 project
   - **Important:** This must be running on http://localhost:5001 or https://localhost:44344
 
 **2.** Start `StsServerIdentity` project.
-  - **Important:** This must be running on http://localhost:5000 or https://localhost:44318/
+  - **Important:** This must be running on http://localhost:5000 or https://localhost:44318
+
+**3.** Start any SPA project.
+  - **Important:** This must be running on http://localhost:4200 or https://localhost:4200 (valid certificate)
+
 
