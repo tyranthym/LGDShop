@@ -11,7 +11,7 @@ namespace LGDShop.Domain.Entities
         public int EmployeeId { get; set; }
 
         public string Name { get; set; }
-        public int Age { get; set; }
+        public int Age { get; set; }  // TODO: replaced by DOB
 
         [Phone]
         public string PhoneNumber { get; set; }

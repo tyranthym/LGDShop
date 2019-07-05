@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using LGDShop.DataAccess;
 using LGDShop.DataAccess.Data;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
@@ -40,8 +41,9 @@ namespace LGDShop.API
                     var shopDbContext = services.GetRequiredService<ShopDbContext>();
                     ApiDbSeeder.Seed(shopDbContext).Wait();
                     var applicationDbContext = services.GetRequiredService<ApplicationDbContext>();
-                    var roleManager = services.GetService<RoleManager<IdentityRole>>();
-                    ApplicationDbSeeder.Seed(applicationDbContext, roleManager).Wait();
+                    var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+                    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+                    ApplicationDbSeeder.Seed(applicationDbContext, roleManager, userManager).Wait();
                 }
                 catch (Exception ex)
                 {

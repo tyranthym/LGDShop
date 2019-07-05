@@ -49,7 +49,25 @@ namespace LGDShop.API
                     .AddEntityFrameworkStores<ApplicationDbContext>()
                     .AddDefaultTokenProviders();
 
-            services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
+            //services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
+            //        .AddIdentityServerAuthentication(options =>
+            //        {
+            //            // auth server base endpoint (will use to search for disco doc)
+            //            options.Authority = "http://localhost:5000";
+            //            options.ApiName = IdentityServerConfig.ApiName; // required audience of access tokens
+            //            options.RequireHttpsMetadata = false; // dev only!
+            //        });
+
+            services.AddAuthentication(options =>
+            {
+                //these three line must be called in order to only use [Authorize] in api controller
+                options.DefaultScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultAuthenticateScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
+                //options.DefaultSignInScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
+                //options.DefaultSignOutScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
+                //options.DefaultForbidScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
+            })
                     .AddIdentityServerAuthentication(options =>
                     {
                         // auth server base endpoint (will use to search for disco doc)
@@ -57,6 +75,24 @@ namespace LGDShop.API
                         options.ApiName = IdentityServerConfig.ApiName; // required audience of access tokens
                         options.RequireHttpsMetadata = false; // dev only!
                     });
+
+
+            services.AddCors(options => options.AddPolicy("SpaOnly", b =>
+                        b.WithOrigins("http://localhost:4300",
+                                      "https://localhost:4300")
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()));
+
+            var assembly = Assembly.GetAssembly(typeof(Startup));
+
+            services.AddMvc()
+                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssembly(assembly))
+                .AddJsonOptions(options =>
+                {
+                    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;  //to prevent reference loops from happening
+                    options.SerializerSettings.Formatting = Formatting.Indented;    //For pretty print Swagger JSON
+                })
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
@@ -88,22 +124,6 @@ namespace LGDShop.API
                 c.IncludeXmlComments(xmlPath);
             });
 
-            services.AddCors(options => options.AddPolicy("SpaOnly", b =>
-                        b.WithOrigins("http://localhost:4300",
-                                      "https://localhost:4300")
-                        .AllowAnyMethod()
-                        .AllowAnyHeader()));
-
-
-            var assembly = Assembly.GetAssembly(typeof(Startup));
-            services.AddMvc()
-                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssembly(assembly))
-                .AddJsonOptions(options =>
-                {
-                    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;  //to prevent reference loops from happening
-                    options.SerializerSettings.Formatting = Formatting.Indented;    //For pretty print Swagger JSON
-                })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             //app services
             services.AddScoped<IEmployeeService, EmployeeService>();
@@ -125,6 +145,7 @@ namespace LGDShop.API
 
             app.UseCors("SpaOnly");
 
+            app.UseAuthentication();
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger(o =>
@@ -146,8 +167,9 @@ namespace LGDShop.API
                 o.RoutePrefix = "docs";
                 o.DisplayOperationId();
             });
-            app.UseAuthentication();
+
             app.UseMvc();
+
         }
     }
 }

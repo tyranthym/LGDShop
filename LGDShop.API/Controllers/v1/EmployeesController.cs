@@ -6,8 +6,10 @@ using LGDShop.API.ModelMapper.V1;
 using LGDShop.API.Models.V1.Requests;
 using LGDShop.API.Models.V1.Responses;
 using LGDShop.DataAccess.Data;
+using LGDShop.Domain.Constants;
 using LGDShop.Domain.Entities;
 using LGDShop.Services.EntityServices;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -15,7 +17,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LGDShop.API.Controllers.V1
 {
-    [Authorize]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(Roles = AppRoles.Admin)]
     public class EmployeesController : ApiControllerV1BaseController
     {
         private readonly ShopDbContext db;
