@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace LGDShop.DataAccess.Migrations
+namespace LGDShop.DataAccess.Migrations.ShopDb
 {
     [DbContext(typeof(ShopDbContext))]
-    [Migration("20190630195457_change_deleteAt_nullable")]
-    partial class change_deleteAt_nullable
+    [Migration("20190705010635_shop_init")]
+    partial class shop_init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

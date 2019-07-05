@@ -4,16 +4,14 @@ using LGDShop.DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace LGDShop.DataAccess.Migrations
+namespace LGDShop.DataAccess.Migrations.ShopDb
 {
     [DbContext(typeof(ShopDbContext))]
-    [Migration("20190630151630_create_department_update_employee")]
-    partial class create_department_update_employee
+    partial class ShopDbContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -44,7 +42,7 @@ namespace LGDShop.DataAccess.Migrations
 
                     b.Property<DateTime>("CreatedAt");
 
-                    b.Property<DateTime>("DeletedAt");
+                    b.Property<DateTime?>("DeletedAt");
 
                     b.Property<int?>("DepartmentId");
 

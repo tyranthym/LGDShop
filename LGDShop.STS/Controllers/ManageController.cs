@@ -9,13 +9,13 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using StsServerIdentity.Models.ManageViewModels;
-using StsServerIdentity.Models;
 using StsServerIdentity.Services;
 using Microsoft.Extensions.Localization;
 using StsServerIdentity.Resources;
 using System.Reflection;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using LGDShop.DataAccess;
 
 namespace StsServerIdentity.Controllers
 {

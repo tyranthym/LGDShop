@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace StsServerIdentity.Migrations
+namespace LGDShop.DataAccess.Migrations.ApplicationDb
 {
     public partial class sts_init : Migration
     {

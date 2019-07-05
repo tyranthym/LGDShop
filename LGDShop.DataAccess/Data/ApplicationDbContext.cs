@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using LGDShop.DataAccess;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using StsServerIdentity.Models;
 
-namespace StsServerIdentity.Data
+namespace LGDShop.DataAccess.Data
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {

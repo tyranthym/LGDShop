@@ -20,6 +20,7 @@ using StsServerIdentity.Services;
 using Microsoft.Extensions.Localization;
 using StsServerIdentity.Resources;
 using System.Reflection;
+using LGDShop.DataAccess;
 
 namespace StsServerIdentity.Controllers
 {

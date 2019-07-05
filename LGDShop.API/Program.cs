@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using LGDShop.DataAccess.Data;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -36,8 +37,11 @@ namespace LGDShop.API
                 var services = scope.ServiceProvider;
                 try
                 {
-                    var context = services.GetRequiredService<ShopDbContext>();
-                    ApiDbSeeder.Seed(context).Wait();
+                    var shopDbContext = services.GetRequiredService<ShopDbContext>();
+                    ApiDbSeeder.Seed(shopDbContext).Wait();
+                    var applicationDbContext = services.GetRequiredService<ApplicationDbContext>();
+                    var roleManager = services.GetService<RoleManager<IdentityRole>>();
+                    ApplicationDbSeeder.Seed(applicationDbContext, roleManager).Wait();
                 }
                 catch (Exception ex)
                 {

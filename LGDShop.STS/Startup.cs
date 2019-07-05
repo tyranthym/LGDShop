@@ -17,12 +17,12 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using StsServerIdentity.Services.Certificate;
 using StsServerIdentity.Models;
-using StsServerIdentity.Data;
 using StsServerIdentity.Resources;
 using StsServerIdentity.Services;
 using Microsoft.IdentityModel.Tokens;
 using StsServerIdentity.Filters;
-
+using LGDShop.DataAccess;
+using LGDShop.DataAccess.Data;
 
 namespace StsServerIdentity
 {
