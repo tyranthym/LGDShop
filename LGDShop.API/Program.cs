@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Serilog;
+using Serilog.Events;
 
 namespace LGDShop.API
 {
@@ -18,18 +20,42 @@ namespace LGDShop.API
     {
         public static void Main(string[] args)
         {
-            var host = CreateWebHostBuilder(args).Build();
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+                .Enrich.FromLogContext()
+                .WriteTo.Console()
+                .WriteTo.File("logs/log.txt",
+                rollingInterval: RollingInterval.Day,
+                fileSizeLimitBytes: 107374182,   //100MB
+                rollOnFileSizeLimit: true)
+                .CreateLogger();
 
-            //seed database (also auto-update pending migrations if there is any)
-            SeedShopDb(host);
+            try
+            {
+                Log.Information("Starting web host");
 
+                var host = CreateWebHostBuilder(args).Build();
 
-            host.Run();
+                //seed database (also auto-update pending migrations if there is any)
+                SeedShopDb(host);
+
+                host.Run();
+            }
+            catch (Exception ex)
+            {
+                Log.Fatal(ex, "Host terminated unexpectedly");
+            }
+            finally
+            {
+                Log.CloseAndFlush();
+            }
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>();
+                .UseStartup<Startup>()
+                .UseSerilog();
 
         private static void SeedShopDb(IWebHost host)
         {
