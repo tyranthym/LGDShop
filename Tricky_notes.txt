@@ -1,9 +1,31 @@
 asp.net core 2.2
 
-1. ef core
+- ef core
 
 when using .AsNoTracking() together with .Include(emp => emp.Department) which emp.Department can be null, emp.Department is not populated correctly.
 Any place used emp.Department afterward will throw exception
 
 
 walkaround: check DepartmentId == null first, if it's null just set the target directly to null instead using emp.Department?.Name 
+
+- how to reset migration (development enviornment when db context class && migrations are in seperate project as start up project)
+
+1. delete _EFMigrationHistory table or entire database completely
+2. delete all migration folders
+for each db context: (e.g. ShopDbContext)
+3. set one web project which contains that db context config -
+
+e.g. 
+            services.AddDbContext<ShopDbContext>(options =>
+                options.UseLazyLoadingProxies().UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+as startup project(only one is enough).
+4. open package manager console, choose data access project(contains ShopDbContext class && new migrations) for default project
+
+5. Add-Migration ShopDb_init -Context ShopDbContext -OutputDir Migrations/ShopDb
+
+6. Update-Database for ShopDbContext
+
+repeat for other db context
+
+

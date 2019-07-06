@@ -21,4 +21,10 @@ An ASP.NET CORE 2.2 webapi + identity server 4 project
 
 Don't touch master branch, use develop instead 
 
+## Missing Secret
+
+Manully added the following misssing files: 
+1. sts_dev_cert.pfx in STS project root folder 
+2. replace local secret.json by right-click STS project - manage user secrets
+
 

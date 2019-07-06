@@ -66,6 +66,6 @@ namespace StsServerIdentity
                     .ReadFrom.Configuration(hostingContext.Configuration)
                     .Enrich.FromLogContext()
                     .WriteTo.Console(theme: AnsiConsoleTheme.Code)
-                ).UseUrls("https://localhost:5000");
+                ).UseUrls("http://localhost:5000");
     }
 }

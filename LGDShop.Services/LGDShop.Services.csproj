@@ -8,8 +8,4 @@
     <ProjectReference Include="..\LGDShop.DataAccess\LGDShop.DataAccess.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="EntityServices\Interfaces\" />
-  </ItemGroup>
-
 </Project>
