@@ -22,10 +22,19 @@ namespace LGDShop.Services.EntityServices
             return db.Employees.AsQueryable();
         }
 
+        IQueryable<Employee> IEmployeeService.GetEmployeesForDepartment(int? departmentId)
+        {
+            return db.Employees.Where(emp => emp.DepartmentId == departmentId);
+        }
+
+        IQueryable<Employee> IEmployeeService.GetEmployeesForPosition(int? positionId)
+        {
+            return db.Employees.Where(emp => emp.PositionId == positionId);
+        }
+
         async Task<Employee> IEmployeeService.FindEmployeeAsync(int? id)
         {
             return await db.Employees.FindAsync(id);
         }
-
     }
 }

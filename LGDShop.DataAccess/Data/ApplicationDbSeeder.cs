@@ -58,6 +58,25 @@ namespace LGDShop.DataAccess.Data
                     await userManager.AddToRolesAsync(user, roles);
                 }
             }
+            //seed one admin
+            if (!await db.Users.AnyAsync(u => u.UserName == "admin@admin.com"))
+            {
+                //create super-admin user
+                var user = new ApplicationUser
+                {
+                    UserName = "admin@admin.com",        //default username
+                    Email = "admin@admin.com",
+                    EmailConfirmed = true,
+
+                    IsAdmin = true
+                };
+
+                IdentityResult result = await userManager.CreateAsync(user, "admin");  //default password
+                if (result.Succeeded)
+                {
+                    await userManager.AddToRoleAsync(user, AppRoles.Admin);
+                }
+            }
         }
     }
 }

@@ -7,6 +7,7 @@ using LGDShop.API.Models.V1.Requests;
 using LGDShop.API.Models.V1.Responses;
 using LGDShop.DataAccess.Data;
 using LGDShop.Domain.Constants;
+using LGDShop.Domain.CustomExtensions;
 using LGDShop.Domain.Entities;
 using LGDShop.Services.EntityServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -14,6 +15,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace LGDShop.API.Controllers.V1
 {
@@ -23,6 +25,7 @@ namespace LGDShop.API.Controllers.V1
     {
         private readonly ShopDbContext db;
         private readonly IEmployeeService employeeService;
+        private static readonly ILogger logger = Log.ForContext<EmployeesController>();
 
         public EmployeesController(ShopDbContext db, IEmployeeService employeeService)
         {
@@ -43,7 +46,7 @@ namespace LGDShop.API.Controllers.V1
                 .AsNoTracking()
                 .Take(10)
                 .ToListAsync();
-
+            logger.Here().Information("Get employees successfully");
             //map to response
             List<EmployeeGetAllResponseIndividual> employeeGetAllResponse = EmployeeMapper.MapFromEmployeesToEmployeeGetAllResponse(employees);
             return Ok(employeeGetAllResponse);
@@ -59,12 +62,12 @@ namespace LGDShop.API.Controllers.V1
         {
             if (id == null)
             {
-                return BadRequest("id not provided!");
+                return BadRequest("Id not provided!");
             }
             Employee employee = await employeeService.FindEmployeeAsync(id);
             if (employee == null)
             {
-                return NotFound("model does not exist!");
+                return NotFound("Model does not exist!");
             }
             return Ok(employee);
         }
@@ -77,10 +80,12 @@ namespace LGDShop.API.Controllers.V1
         /// <response code="201">new employee has been created successfully</response>
         [HttpPost]
         [ProducesResponseType(201)]
+        [Authorize(Policy = "CanManageEmployee")]
         public async Task<IActionResult> Create([FromBody] EmployeeCreateRequest requestModel)
         {
             if (!ModelState.IsValid)
             {
+                logger.Here().Warning("Created employee failed. Model is not valid");
                 return BadRequest(ModelState);
             }
 
@@ -88,6 +93,7 @@ namespace LGDShop.API.Controllers.V1
             Employee employee = EmployeeMapper.MapFromEmployeeCreateRequestToEmployee(requestModel);
             db.Employees.Add(employee);
             await db.SaveChangesAsync();
+            logger.Here().Information("Created employee successfully");
 
             return CreatedAtRoute("GetEmployeeById", new { id = employee.EmployeeId }, null);
         }
@@ -100,6 +106,7 @@ namespace LGDShop.API.Controllers.V1
         /// <response code="204">employee has been updated successfully</response>
         [HttpPut]
         [ProducesResponseType(204)]
+        [Authorize(Policy = "CanManageEmployee")]
         public async Task<IActionResult> Update([FromBody] EmployeeUpdateRequest requestModel)
         {
             if (!ModelState.IsValid)
@@ -128,6 +135,7 @@ namespace LGDShop.API.Controllers.V1
         /// <response code="204">employee has been deleted successfully</response>
         [HttpDelete("{id}")]
         [ProducesResponseType(204)]
+        [Authorize(Policy = "CanManageEmployee")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)

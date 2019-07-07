@@ -9,6 +9,8 @@ using IdentityServer4.Services;
 using Microsoft.AspNetCore.Identity;
 using IdentityServer4;
 using LGDShop.DataAccess;
+using StsServerIdentity.Models;
+using LGDShop.Domain.Constants;
 
 namespace StsServerIdentity
 {
@@ -32,19 +34,19 @@ namespace StsServerIdentity
 
             var claims = principal.Claims.ToList();
 
-            claims = claims.Where(claim => context.RequestedClaimTypes.Contains(claim.Type)).ToList();
-            claims.Add(new Claim(JwtClaimTypes.GivenName, user.UserName));
 
             if (user.IsAdmin)
             {
-                claims.Add(new Claim(JwtClaimTypes.Role, "admin"));
+                claims.Add(new Claim(ApiClaims.Permission, AppPermissions.EmployeesManage));
             }
             else
             {
-                claims.Add(new Claim(JwtClaimTypes.Role, "user"));
+                claims.Add(new Claim(JwtClaimTypes.Role, AppRoles.Employee));
             }
 
-            claims.Add(new Claim(IdentityServerConstants.StandardScopes.Email, user.Email));
+            claims = claims.Where(claim => context.RequestedClaimTypes.Contains(claim.Type)).ToList();
+            //claims.Add(new Claim(JwtClaimTypes.GivenName, user.UserName));
+            //claims.Add(new Claim(IdentityServerConstants.StandardScopes.Email, user.Email));
 
             context.IssuedClaims = claims;
         }

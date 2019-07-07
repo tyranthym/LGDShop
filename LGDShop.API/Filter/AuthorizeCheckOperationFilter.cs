@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using StsServerIdentity;
+﻿using LGDShop.Domain.Constants;
+using Microsoft.AspNetCore.Authorization;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
@@ -28,7 +28,7 @@ namespace LGDShop.API.Filter
                 {
                     new Dictionary<string, IEnumerable<string>>
                     {
-                        { "oauth2", new [] { IdentityServerConfig.ApiName} }
+                        { "oauth2", new [] { IdentityServerSettings.ApiName} }
                     }
                 };
             }

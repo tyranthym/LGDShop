@@ -3,24 +3,14 @@
 
 using IdentityModel;
 using IdentityServer4.Models;
+using LGDShop.Domain.Constants;
 using Microsoft.Extensions.Configuration;
-using StsServerIdentity.Models;
 using System.Collections.Generic;
 
 namespace StsServerIdentity
 {
     public class IdentityServerConfig
     {
-        public const string ApiName = "lgdshop_api";
-        public const string ApiFriendlyName = "GLDShop API";
-        public const string ApiSecret = "longguangdianshop";
-
-        public const string AngularAppClientID = "angular_spa";
-        public const string AngularAppClientSecret = "angular_spa";
-
-        public const string ApiSwaggerClientID = "api_swagger_ui";
-        public const string ApiSwaggerClientSecret = "apiswaggeruisecret";
-
         public static IEnumerable<IdentityResource> GetIdentityResources()
         {
             List<IdentityResource> resources = new List<IdentityResource>
@@ -36,11 +26,11 @@ namespace StsServerIdentity
         {
             return new List<ApiResource>
             {
-                new ApiResource(ApiName, ApiFriendlyName)
+                new ApiResource(IdentityServerSettings.ApiName, IdentityServerSettings.ApiFriendlyName)
                 {
                     ApiSecrets =
                     {
-                        new Secret(ApiSecret.Sha256())
+                        new Secret(IdentityServerSettings.ApiSecret.Sha256())
                     },
                     Scopes =
                     {
@@ -50,7 +40,13 @@ namespace StsServerIdentity
                             DisplayName = "Scope for the general access in api"
                         }
                     },
-                    UserClaims = { JwtClaimTypes.Role, "admin", "user", ApiClaims.General }
+                    UserClaims =
+                    {
+                        JwtClaimTypes.Name,
+                        JwtClaimTypes.Email,
+                        JwtClaimTypes.Role,
+                        ApiClaims.Permission
+                    }
                 }
             };
         }
@@ -62,9 +58,10 @@ namespace StsServerIdentity
 
             return new List<Client>
             {
-                new Client {
+                //spa-angular client
+                new Client { 
                     RequireConsent = false,
-                    ClientId = AngularAppClientID,
+                    ClientId = IdentityServerSettings.AngularAppClientID,
                     ClientName = "Angular SPA",
                     AllowedGrantTypes = GrantTypes.Implicit,
                     AllowedScopes = { "openid", "profile", "email", ApiScopes.General},
@@ -79,10 +76,11 @@ namespace StsServerIdentity
                     RequireClientSecret = false, // This client does not need a secret to request tokens from the token endpoint.
                     AccessTokenLifetime = 300
                 },
-                new Client           //swagger ui client
+                //swagger ui client
+                new Client
                 {
                     RequireConsent = false,
-                    ClientId = ApiSwaggerClientID,
+                    ClientId = IdentityServerSettings.ApiSwaggerClientID,
                     ClientName = "Swagger UI for API",
                     AllowedGrantTypes = GrantTypes.Implicit,
                     RedirectUris = { "http://localhost:5001/docs/oauth2-redirect.html" },

@@ -10,6 +10,7 @@ using LGDShop.API.Filter;
 using LGDShop.API.Options;
 using LGDShop.DataAccess;
 using LGDShop.DataAccess.Data;
+using LGDShop.Domain.Constants;
 using LGDShop.Services.EntityServices;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -23,7 +24,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using StsServerIdentity;
-using StsServerIdentity.Models;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace LGDShop.API
@@ -49,6 +49,17 @@ namespace LGDShop.API
                     .AddEntityFrameworkStores<ApplicationDbContext>()
                     .AddDefaultTokenProviders();
 
+            //only used for seeding application user
+            services.Configure<IdentityOptions>(options =>
+            {
+                // Password settings.
+                options.Password.RequireDigit = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequiredLength = 5;
+            });
+
             //services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
             //        .AddIdentityServerAuthentication(options =>
             //        {
@@ -72,7 +83,7 @@ namespace LGDShop.API
                     {
                         // auth server base endpoint (will use to search for disco doc)
                         options.Authority = "http://localhost:5000";
-                        options.ApiName = IdentityServerConfig.ApiName; // required audience of access tokens
+                        options.ApiName = IdentityServerSettings.ApiName; // required audience of access tokens
                         options.RequireHttpsMetadata = false; // dev only!
                     });
 
@@ -94,10 +105,27 @@ namespace LGDShop.API
                 })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
+            //add policies
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("CanManageEmployee", policy => policy.RequireAssertion(ctx =>
+                {
+                    return ctx.User.IsInRole(AppRoles.SuperAdmin) ||
+                           ctx.User.HasClaim(ApiClaims.Permission, AppPermissions.EmployeesManage);
+                }));
+            });
+
+
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info { Title = "龙广电台商城 - API", Version = "v1" });
+                c.SwaggerDoc("v1", new Info
+                {
+                    Title = "龙广电台商城 - API",
+                    Version = "v1",
+                    Description = "STS Server: http://localhost:5000" + Environment.NewLine + 
+                                  "Identity server documentations: " + new Uri("http://docs.identityserver.io/en/latest/")
+                });
                 c.OperationFilter<AuthorizeCheckOperationFilter>();
                 c.AddSecurityDefinition("oauth2", new OAuth2Scheme
                 {
@@ -127,6 +155,7 @@ namespace LGDShop.API
 
             //app services
             services.AddScoped<IEmployeeService, EmployeeService>();
+            services.AddScoped<IDepartmentService, DepartmentService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -158,8 +187,8 @@ namespace LGDShop.API
             app.UseSwaggerUI(o =>
             {
                 //crediential 
-                o.OAuthClientId(IdentityServerConfig.ApiSwaggerClientID);
-                o.OAuthClientSecret(IdentityServerConfig.ApiSwaggerClientSecret); //Leaving it blank doesn't work
+                o.OAuthClientId(IdentityServerSettings.ApiSwaggerClientID);
+                o.OAuthClientSecret(IdentityServerSettings.ApiSwaggerClientSecret); //Leaving it blank doesn't work
                 o.OAuthAppName(SwaggerConfig.OAuthAppName);
 
                 o.DocumentTitle = "Swagger UI - 龙广交通商城";
@@ -169,7 +198,6 @@ namespace LGDShop.API
             });
 
             app.UseMvc();
-
         }
     }
 }

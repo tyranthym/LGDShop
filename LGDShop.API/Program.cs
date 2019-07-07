@@ -20,16 +20,20 @@ namespace LGDShop.API
     {
         public static void Main(string[] args)
         {
+            //default outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}"
+            //var outputTemplate = "[{Timestamp:HH:mm:ss}] [{Level:u3}] [{SourceContext}]{NewLine}{Message:lj}{NewLine}in method {MemberName} at {FilePath}:{LineNumber}{NewLine}{Exception}{NewLine}";
+            var outputTemplate = "[{Timestamp:HH:mm:ss}] [{Level:u3}] [{SourceContext}] [{MemberName}] [{FilePath}:{LineNumber}]{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}";
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
-                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
                 .Enrich.FromLogContext()
                 .WriteTo.Console()
                 .WriteTo.File("logs/log.txt",
+                outputTemplate: outputTemplate,
                 rollingInterval: RollingInterval.Day,
                 fileSizeLimitBytes: 107374182,   //100MB
                 rollOnFileSizeLimit: true)
-                .CreateLogger();
+                .CreateLogger();         
 
             try
             {

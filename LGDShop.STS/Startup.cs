@@ -148,8 +148,6 @@ namespace StsServerIdentity
                     };
                 });
 
-            services.AddTransient<IProfileService, IdentityWithAdditionalClaimsProfileService>();
-
             services.AddTransient<IEmailSender, EmailSender>();
 
             services.AddIdentityServer()

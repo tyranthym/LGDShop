@@ -11,6 +11,10 @@ namespace LGDShop.Services.EntityServices
     {
         IQueryable<Employee> GetEmployees();
 
+        IQueryable<Employee> GetEmployeesForDepartment(int? departmentId);
+
+        IQueryable<Employee> GetEmployeesForPosition(int? positionId);
+
         Task<Employee> FindEmployeeAsync(int? id);
     }
 }
