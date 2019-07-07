@@ -18,6 +18,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{56D2F4A8-DE7F-47DF-837B-73FE048C8DB5}"
 	ProjectSection(SolutionItems) = preProject
 		HOWTO_update_entity_property.txt = HOWTO_update_entity_property.txt
+		logger_usage.txt = logger_usage.txt
 		Tricky_notes.txt = Tricky_notes.txt
 	EndProjectSection
 EndProject

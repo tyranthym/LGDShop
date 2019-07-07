@@ -27,5 +27,14 @@ namespace LGDShop.DataAccess.Data
         {
             base.OnModelCreating(modelBuilder);
         }
+
+        //provide a non-DI way to init dbcontext 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseLazyLoadingProxies().UseSqlServer(DbGlobalSettings.ConnectionString);
+            }
+        }
     }
 }

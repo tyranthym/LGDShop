@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="CustomValidator\" />
     <Folder Include="DTOs\" />
     <Folder Include="Utility\" />
   </ItemGroup>

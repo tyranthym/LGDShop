@@ -30,6 +30,7 @@ namespace LGDShop.API.Models.V1.Requests
     {
         public EmployeeUpdateRequestValidator()
         {
+            RuleFor(model => model.Id).NotEmpty();
             RuleFor(model => model.Name).NotEmpty().MaximumLength(20);
             RuleFor(model => model.Age).NotEmpty().ExclusiveBetween(0, 100);
         }

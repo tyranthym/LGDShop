@@ -29,3 +29,10 @@ as startup project(only one is enough).
 repeat for other db context
 
 
+- asp.net core  
+
+Web-api [FromBody] model invalid but not hit if (!ModelState.IsValid) block 
+
+https://stackoverflow.com/questions/55100471/handling-model-binding-errors-when-using-frombody-in-net-core-2-1
+
+

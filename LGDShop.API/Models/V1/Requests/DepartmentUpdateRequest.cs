@@ -8,20 +8,24 @@ using System.Threading.Tasks;
 
 namespace LGDShop.API.Models.V1.Requests
 {
-    public class DepartmentCreateRequest
+    public class DepartmentUpdateRequest
     {
+        [JsonProperty("id")]
+        public int Id { get; set; }
+
         [JsonProperty("name")]
-        [UniqueNameForDepartmentCreateRequest]
+        [UniqueNameForDepartmentUpdateRequest]
         public string Name { get; set; }
     }
 
-
     //fluent validation validatior
-    public class DepartmentCreateRequestValidator : AbstractValidator<DepartmentCreateRequest>
+    public class DepartmentUpdateRequestValidator : AbstractValidator<DepartmentUpdateRequest>
     {
-        public DepartmentCreateRequestValidator()
+        public DepartmentUpdateRequestValidator()
         {
+            RuleFor(model => model.Id).NotEmpty();
             RuleFor(model => model.Name).NotEmpty().MaximumLength(50);  //TODO: make sure the name is unique(using fluent validation)
         }
     }
+
 }

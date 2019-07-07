@@ -15,9 +15,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace LGDShop.API.Controllers.V1
 {
+    [SwaggerTag("Create, read, update and delete departments. Super-admin role required")]
     [Authorize(Roles = AppRoles.SuperAdmin)]
     public class DepartmentsController : ApiControllerV1BaseController
     {
@@ -29,6 +31,8 @@ namespace LGDShop.API.Controllers.V1
         {
             this.db = db;
             this.departmentService = departmentService;
+            //init default error message
+            this.ModelName = nameof(Department);
         }
 
         /// <summary>
@@ -57,13 +61,12 @@ namespace LGDShop.API.Controllers.V1
         {
             if (id == null)
             {
-                return BadRequest("Id not provided!");
+                return IdNotProvidedBadRequest(logger.Here());
             }
             Department department = await departmentService.FindDepartmentAsync(id);
             if (department == null)
             {
-                logger.Here().Warning($"{nameof(Department)} does not exist. Id passed: {id}");
-                return NotFound($"{nameof(Department)} does not exist!");
+                return ModelNotFound(logger, id);
             }
             return Ok(department);
         }
@@ -78,12 +81,6 @@ namespace LGDShop.API.Controllers.V1
         [ProducesResponseType(201)]
         public async Task<IActionResult> Create([FromBody] DepartmentCreateRequest requestModel)
         {
-            if (!ModelState.IsValid)
-            {
-                logger.Here().Warning("Create department failed. Model is not valid");
-                return BadRequest(ModelState);
-            }
-
             //map to entity
             Department department = DepartmentMapper.MapFromDepartmentCreateRequestToDepartment(requestModel);
             db.Departments.Add(department);
@@ -92,5 +89,30 @@ namespace LGDShop.API.Controllers.V1
 
             return CreatedAtRoute("GetDepartmentById", new { id = department.DepartmentId }, null);
         }
+
+        /// <summary>
+        /// Update existing department
+        /// </summary>
+        /// <param name="requestModel"></param>
+        /// <returns></returns>
+        /// <response code="204">department has been updated successfully</response>
+        [HttpPut]
+        [ProducesResponseType(204)]
+        public async Task<IActionResult> Update([FromBody] DepartmentUpdateRequest requestModel)
+        {
+            Department department = await departmentService.FindDepartmentAsync(requestModel.Id);
+            if (department == null)
+            {
+                return ModelNotFound(logger.Here(), requestModel.Id);
+            }
+
+            DepartmentMapper.MapFromDepartmentUpdateRequestToDepartment(requestModel, department);
+            db.Departments.Update(department);
+            await db.SaveChangesAsync();
+            logger.Here().Information("Updated department successfully");
+
+            return NoContent();
+        }
+
     }
 }

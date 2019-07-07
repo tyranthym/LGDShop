@@ -40,6 +40,8 @@ namespace LGDShop.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            DbGlobalSettings.ConnectionString = Configuration.GetConnectionString("DefaultConnection");
+
             services.AddDbContext<ShopDbContext>(options =>
                 options.UseLazyLoadingProxies().UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddDbContext<ApplicationDbContext>(options =>
@@ -121,10 +123,10 @@ namespace LGDShop.API
             {
                 c.SwaggerDoc("v1", new Info
                 {
-                    Title = "龙广电台商城 - API",
+                    Title = "龙广交通商城 - API",
                     Version = "v1",
-                    Description = "STS Server: http://localhost:5000" + Environment.NewLine + 
-                                  "Identity server documentations: " + new Uri("http://docs.identityserver.io/en/latest/")
+                    Description = "STS Server: http://localhost:5000" + Environment.NewLine +
+                                  "Identity server documentation: " + new Uri("http://docs.identityserver.io/en/latest/")
                 });
                 c.OperationFilter<AuthorizeCheckOperationFilter>();
                 c.AddSecurityDefinition("oauth2", new OAuth2Scheme
@@ -150,6 +152,8 @@ namespace LGDShop.API
                 var baseDirectory = AppContext.BaseDirectory;
                 var xmlPath = Path.Combine(baseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);
+                // Enable Annotations
+                c.EnableAnnotations();
             });
 
 

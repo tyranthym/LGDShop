@@ -33,6 +33,7 @@ namespace LGDShop.API.ModelMapper.V1
             return departmentGetAllResponseIndividual;
         }
 
+        //create department
         /// <summary>
         /// entity to add: Department
         /// </summary>
@@ -44,6 +45,20 @@ namespace LGDShop.API.ModelMapper.V1
             {
                 Name = departmentCreateRequest.Name
             };
+
+            return department;
+        }
+
+        //update department
+        /// <summary>
+        /// entity to modify: Department
+        /// </summary>
+        /// <param name="departmentUpdateRequest"></param>
+        /// <param name="department"></param>
+        /// <returns></returns>
+        public static Department MapFromDepartmentUpdateRequestToDepartment(DepartmentUpdateRequest departmentUpdateRequest, Department department)
+        {
+            department.Name = departmentUpdateRequest.Name;
 
             return department;
         }

@@ -16,10 +16,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace LGDShop.API.Controllers.V1
 {
     //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [SwaggerTag("Create, read, update and delete employees. Admin role required for read access. Admin with " + ApiClaims.Permission + ":" + AppPermissions.EmployeesManage + " claim for full access")]
     [Authorize(Roles = AppRoles.Admin)]
     public class EmployeesController : ApiControllerV1BaseController
     {
@@ -31,6 +33,8 @@ namespace LGDShop.API.Controllers.V1
         {
             this.db = db;
             this.employeeService = employeeService;
+            //init default error message
+            this.ModelName = nameof(Employee);
         }
 
         /// <summary>
@@ -62,12 +66,12 @@ namespace LGDShop.API.Controllers.V1
         {
             if (id == null)
             {
-                return BadRequest("Id not provided!");
+                return IdNotProvidedBadRequest(logger.Here());
             }
             Employee employee = await employeeService.FindEmployeeAsync(id);
             if (employee == null)
             {
-                return NotFound("Model does not exist!");
+                return ModelNotFound(logger.Here(), id);
             }
             return Ok(employee);
         }
@@ -83,11 +87,11 @@ namespace LGDShop.API.Controllers.V1
         [Authorize(Policy = "CanManageEmployee")]
         public async Task<IActionResult> Create([FromBody] EmployeeCreateRequest requestModel)
         {
-            if (!ModelState.IsValid)
-            {
-                logger.Here().Warning("Created employee failed. Model is not valid");
-                return BadRequest(ModelState);
-            }
+            //if (!ModelState.IsValid)
+            //{
+            //    logger.Here().Warning("Created employee failed. Model is not valid");
+            //    return BadRequest(ModelState);
+            //}
 
             //map to entity
             Employee employee = EmployeeMapper.MapFromEmployeeCreateRequestToEmployee(requestModel);
@@ -109,26 +113,27 @@ namespace LGDShop.API.Controllers.V1
         [Authorize(Policy = "CanManageEmployee")]
         public async Task<IActionResult> Update([FromBody] EmployeeUpdateRequest requestModel)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            //if (!ModelState.IsValid)
+            //{
+            //    return BadRequest(ModelState);
+            //}
 
             Employee employee = await employeeService.FindEmployeeAsync(requestModel.Id);
             if (employee == null)
             {
-                return NotFound($"{nameof(Employee)} was not found");
+                return ModelNotFound(logger.Here(), requestModel.Id);
             }
 
-            EmployeeMapper.MapFromEmployeeUpdateRequestToEmployee(employee, requestModel);
+            EmployeeMapper.MapFromEmployeeUpdateRequestToEmployee(requestModel, employee);
             db.Employees.Update(employee);
             await db.SaveChangesAsync();
+            logger.Here().Information("Updated employee successfully");
 
             return NoContent();
         }
 
         /// <summary>
-        /// Delete employee
+        /// Soft-Delete employee
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -140,12 +145,12 @@ namespace LGDShop.API.Controllers.V1
         {
             if (id == null)
             {
-                return BadRequest("id not provided!");
+                return IdNotProvidedBadRequest(logger.Here());
             }
             Employee employee = await employeeService.FindEmployeeAsync(id);
             if (employee == null)
             {
-                return NotFound($"{nameof(Employee)} was not found");
+                return ModelNotFound(logger.Here(), id);
             }
 
             //soft delete employee
@@ -153,6 +158,7 @@ namespace LGDShop.API.Controllers.V1
             employee.DeletedAt = DateTime.UtcNow;
             db.Employees.Update(employee);
             await db.SaveChangesAsync();
+            logger.Here().Information("Deleted employee successfully");
 
             return NoContent();
         }

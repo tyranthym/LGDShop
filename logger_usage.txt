@@ -1,0 +1,6 @@
+1. In each controller, create a static logger by passing context class  e.g.
+
+private static readonly ILogger logger = Log.ForContext<EmployeesController>();
+
+
+2. beware to call logger.Here() in interested method to log the method name and file path ( you don't have to do that if method name is not important) 

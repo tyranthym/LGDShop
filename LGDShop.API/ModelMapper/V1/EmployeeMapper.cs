@@ -10,28 +10,6 @@ namespace LGDShop.API.ModelMapper.V1
 {
     public static class EmployeeMapper
     {
-        //create employee
-        /// <summary>
-        /// entity to add: Employee
-        /// </summary>
-        /// <param name="employeeCreateRequest"></param>
-        /// <returns></returns>
-        public static Employee MapFromEmployeeCreateRequestToEmployee(EmployeeCreateRequest employeeCreateRequest)
-        {
-            Employee employee = new Employee
-            {
-                Name = employeeCreateRequest.Name,
-                Age = employeeCreateRequest.Age,
-                PhoneNumber = employeeCreateRequest.PhoneNumber,
-                DepartmentId = employeeCreateRequest.DepartmentId,
-                PositionId = employeeCreateRequest.PositionId,
-
-                CreatedAt = DateTime.UtcNow
-            };
-
-            return employee;
-        }
-
         //get all
         public static List<EmployeeGetAllResponseIndividual> MapFromEmployeesToEmployeeGetAllResponse(List<Employee> employees)
         {
@@ -59,14 +37,37 @@ namespace LGDShop.API.ModelMapper.V1
             return employeeGetAllResponseIndividual;
         }
 
+        //create employee
+        /// <summary>
+        /// entity to add: Employee
+        /// </summary>
+        /// <param name="employeeCreateRequest"></param>
+        /// <returns></returns>
+        public static Employee MapFromEmployeeCreateRequestToEmployee(EmployeeCreateRequest employeeCreateRequest)
+        {
+            Employee employee = new Employee
+            {
+                Name = employeeCreateRequest.Name,
+                Age = employeeCreateRequest.Age,
+                PhoneNumber = employeeCreateRequest.PhoneNumber,
+                DepartmentId = employeeCreateRequest.DepartmentId,
+                PositionId = employeeCreateRequest.PositionId,
+
+                CreatedAt = DateTime.UtcNow
+            };
+
+            return employee;
+        }
+
+
         //update employee
         /// <summary>
         /// entity to modify: Employee
         /// </summary>
-        /// <param name="employee"></param>
         /// <param name="employeeUpdateRequest"></param>
+        /// <param name="employee"></param>
         /// <returns></returns>
-        public static Employee MapFromEmployeeUpdateRequestToEmployee(Employee employee, EmployeeUpdateRequest employeeUpdateRequest)
+        public static Employee MapFromEmployeeUpdateRequestToEmployee(EmployeeUpdateRequest employeeUpdateRequest, Employee employee)
         {
             employee.Name = employeeUpdateRequest.Name;
             employee.Age = employeeUpdateRequest.Age;

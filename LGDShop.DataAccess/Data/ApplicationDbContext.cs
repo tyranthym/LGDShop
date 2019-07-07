@@ -18,5 +18,14 @@ namespace LGDShop.DataAccess.Data
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);
         }
+
+        //provide a non-DI way to init dbcontext 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseLazyLoadingProxies().UseSqlServer(DbGlobalSettings.ConnectionString);
+            }
+        }
     }
 }
