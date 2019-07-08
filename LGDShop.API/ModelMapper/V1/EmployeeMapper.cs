@@ -11,14 +11,18 @@ namespace LGDShop.API.ModelMapper.V1
     public static class EmployeeMapper
     {
         //get all
-        public static List<EmployeeGetAllResponseIndividual> MapFromEmployeesToEmployeeGetAllResponse(List<Employee> employees)
+        public static EmployeeGetAllResponse MapFromEmployeesToEmployeeGetAllResponse(List<Employee> employees)
         {
-            List<EmployeeGetAllResponseIndividual> employeeGetAllResponse = new List<EmployeeGetAllResponseIndividual>();
+            EmployeeGetAllResponse employeeGetAllResponse = new EmployeeGetAllResponse
+            {
+                EmployeeGetAllResponseIndividuals = new List<EmployeeGetAllResponseIndividual>()
+            };
             foreach (var employee in employees)
             {
                 var employeeGetAllResponseIndividual = MapFromEmployeeToEmployeeGetAllResponseIndividual(employee);
-                employeeGetAllResponse.Add(employeeGetAllResponseIndividual);
+                employeeGetAllResponse.EmployeeGetAllResponseIndividuals.Add(employeeGetAllResponseIndividual);
             }
+            employeeGetAllResponse.IsSuccessful = true;
             return employeeGetAllResponse;
         }
         private static EmployeeGetAllResponseIndividual MapFromEmployeeToEmployeeGetAllResponseIndividual(Employee employee)

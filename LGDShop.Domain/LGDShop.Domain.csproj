@@ -7,6 +7,7 @@
   <ItemGroup>
     <Folder Include="CustomValidator\" />
     <Folder Include="DTOs\" />
+    <Folder Include="Services\Interface\" />
     <Folder Include="Utility\" />
   </ItemGroup>
 

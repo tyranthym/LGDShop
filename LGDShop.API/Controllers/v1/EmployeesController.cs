@@ -52,7 +52,7 @@ namespace LGDShop.API.Controllers.V1
                 .ToListAsync();
             logger.Here().Information("Get employees successfully");
             //map to response
-            List<EmployeeGetAllResponseIndividual> employeeGetAllResponse = EmployeeMapper.MapFromEmployeesToEmployeeGetAllResponse(employees);
+            EmployeeGetAllResponse employeeGetAllResponse = EmployeeMapper.MapFromEmployeesToEmployeeGetAllResponse(employees);
             return Ok(employeeGetAllResponse);
         }
 
@@ -137,7 +137,7 @@ namespace LGDShop.API.Controllers.V1
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        /// <response code="204">employee has been deleted successfully</response>
+        /// <response code="204">employee has been soft-deleted successfully</response>
         [HttpDelete("{id}")]
         [ProducesResponseType(204)]
         [Authorize(Policy = "CanManageEmployee")]

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace LGDShop.Domain.Entities
 {
-    public class Employee : EntityBase
+    public class Employee : EntityBaseCanSoftDelete
     {
         [Key]
         public int EmployeeId { get; set; }

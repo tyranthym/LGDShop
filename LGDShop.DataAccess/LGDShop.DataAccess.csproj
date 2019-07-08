@@ -5,6 +5,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\ShopDb\20190708122001_add_display_id.cs" />
+    <Compile Remove="Migrations\ShopDb\20190708122001_add_display_id.Designer.cs" />
+    <Compile Remove="Migrations\ShopDb\20190708122325_add_display_id.cs" />
+    <Compile Remove="Migrations\ShopDb\20190708122325_add_display_id.Designer.cs" />
+    <Compile Remove="Migrations\ShopDb\20190708171722_test.cs" />
+    <Compile Remove="Migrations\ShopDb\20190708171722_test.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.2.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="2.2.4" />

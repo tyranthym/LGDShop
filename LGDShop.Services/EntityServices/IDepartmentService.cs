@@ -11,5 +11,6 @@ namespace LGDShop.Services.EntityServices
     {
         IQueryable<Department> GetDepartments();
         Task<Department> FindDepartmentAsync(int? id);
+        Task<bool> HasNoEmployeeAsync(int? id);
     }
 }

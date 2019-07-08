@@ -47,7 +47,7 @@ namespace LGDShop.API.Controllers.V1
                 .ToListAsync();
             logger.Here().Information("Get departments successfully");
             //map to response
-            List<DepartmentGetAllResponseIndividual> departmentGetAllResponse = DepartmentMapper.MapFromDepartmentsToDepartmentGetAllResponse(db, department);
+            DepartmentGetAllResponse departmentGetAllResponse = DepartmentMapper.MapFromDepartmentsToDepartmentGetAllResponse(db, department);
             return Ok(departmentGetAllResponse);
         }
 
@@ -114,5 +114,41 @@ namespace LGDShop.API.Controllers.V1
             return NoContent();
         }
 
+        /// <summary>
+        /// Delete single department
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        /// <response code="200">department has been deleted successfully</response>
+        [HttpDelete("{id}")]
+        [ProducesResponseType(200)]
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return IdNotProvidedBadRequest(logger.Here());
+            }
+            Department department = await departmentService.FindDepartmentAsync(id);
+            if (department == null)
+            {
+                return ModelNotFound(logger.Here(), id);
+            }
+
+            //check if this department does not have any employee
+            bool isEmptyDepartment = await departmentService.HasNoEmployeeAsync(department.DepartmentId);
+            if (isEmptyDepartment == false)
+            {
+                return ErrorResponseOk(logger.Here(), $"Delete department failed. Cannot delete department that has employees associated with it. DepartmentId: {department.DepartmentId}");
+            }
+
+            //delete department
+            db.Departments.Remove(department);
+            await db.SaveChangesAsync();
+            logger.Here().Information("Deleted department successfully");
+
+            //map to delete response
+            EntityDeleteResponse entityDeleteResponse = DepartmentMapper.MapFromDepartmentToEntityDeleteResponse(department);
+            return Ok(entityDeleteResponse);
+        }
     }
 }

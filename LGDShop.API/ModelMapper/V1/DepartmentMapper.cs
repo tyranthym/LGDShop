@@ -1,6 +1,7 @@
 ﻿using LGDShop.API.Models.V1.Requests;
 using LGDShop.API.Models.V1.Responses;
 using LGDShop.DataAccess.Data;
+using LGDShop.Domain.Constants;
 using LGDShop.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -12,14 +13,18 @@ namespace LGDShop.API.ModelMapper.V1
     public static class DepartmentMapper
     {
         //get all
-        public static List<DepartmentGetAllResponseIndividual> MapFromDepartmentsToDepartmentGetAllResponse(ShopDbContext db, List<Department> departments)
+        public static DepartmentGetAllResponse MapFromDepartmentsToDepartmentGetAllResponse(ShopDbContext db, List<Department> departments)
         {
-            List<DepartmentGetAllResponseIndividual> departmentGetAllResponse = new List<DepartmentGetAllResponseIndividual>();
+            DepartmentGetAllResponse departmentGetAllResponse = new DepartmentGetAllResponse
+            {
+                DepartmentGetAllResponseIndividuals = new List<DepartmentGetAllResponseIndividual>()
+            };
             foreach (var department in departments)
             {
                 var departmentGetAllResponseIndividual = MapFromDepartmentToDepartmentGetAllResponseIndividual(db, department);
-                departmentGetAllResponse.Add(departmentGetAllResponseIndividual);
+                departmentGetAllResponse.DepartmentGetAllResponseIndividuals.Add(departmentGetAllResponseIndividual);
             }
+            departmentGetAllResponse.IsSuccessful = true;
             return departmentGetAllResponse;
         }
         private static DepartmentGetAllResponseIndividual MapFromDepartmentToDepartmentGetAllResponseIndividual(ShopDbContext db, Department department)
@@ -61,6 +66,19 @@ namespace LGDShop.API.ModelMapper.V1
             department.Name = departmentUpdateRequest.Name;
 
             return department;
+        }
+
+        //delete department
+        public static EntityDeleteResponse MapFromDepartmentToEntityDeleteResponse(Department department)
+        {
+            EntityDeleteResponse entityDeleteResponse = new EntityDeleteResponse
+            {
+                Id = department.DepartmentId,
+                Entity = EntityType.Department,
+                IsDeleted = true,
+                IsSuccessful = true
+            };
+            return entityDeleteResponse;
         }
 
     }
