@@ -11,7 +11,7 @@ namespace LGDShop.API.Filter
 {
     public class AuthorizeCheckOperationFilter : IOperationFilter
     {
-        public void Apply(Operation operation, OperationFilterContext context)
+        public void Apply(Operation operation, OperationFilterContext context) 
         {
             // Check for authorize attribute
             var hasAuthorize = context.MethodInfo.DeclaringType.GetCustomAttributes(true)
