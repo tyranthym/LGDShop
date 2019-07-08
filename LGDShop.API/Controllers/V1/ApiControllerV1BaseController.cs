@@ -64,14 +64,14 @@ namespace LGDShop.API.Controllers.V1
             return NotFound(defaultErrorMessageModelNotFound);
         }
 
-        //
-        // Summary:
-        //     Creates a Microsoft.AspNetCore.Mvc.OkResult object that produces an empty Microsoft.AspNetCore.Http.StatusCodes.Status200OK
-        //     response.
-        //
-        // Returns:
-        //     The created Microsoft.AspNetCore.Mvc.OkResult for the response.
-
+        /// <summary>
+        /// Log 200OK response,
+        /// Creates an Microsoft.AspNetCore.Mvc.OkObjectResult object that produces an Microsoft.AspNetCore.Http.StatusCodes.Status200OK response.
+        /// </summary>
+        /// <param name="logger"></param>
+        /// <param name="errorMessage"></param>
+        /// <param name="errorType">application error type</param>
+        /// <returns>The created Microsoft.AspNetCore.Mvc.OkObjectResult for the response.</returns>
         protected OkObjectResult ErrorResponseOk(ILogger logger, string errorMessage, string errorType = ErrorType.BusinessRuleViolation)
         {
             if (string.IsNullOrWhiteSpace(errorMessage))
