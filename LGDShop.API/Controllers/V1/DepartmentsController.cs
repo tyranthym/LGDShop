@@ -25,12 +25,14 @@ namespace LGDShop.API.Controllers.V1
     {
         private readonly ShopDbContext db;
         private readonly IDepartmentService departmentService;
+        private readonly IEmployeeService employeeService;
         private static readonly ILogger logger = Log.ForContext<DepartmentsController>();
 
-        public DepartmentsController(ShopDbContext db, IDepartmentService departmentService)
+        public DepartmentsController(ShopDbContext db, IDepartmentService departmentService, IEmployeeService employeeService)
         {
             this.db = db;
             this.departmentService = departmentService;
+            this.employeeService = employeeService;
             //init default error message
             this.ModelName = nameof(Department);
         }
@@ -40,6 +42,7 @@ namespace LGDShop.API.Controllers.V1
         /// </summary>
         /// <returns></returns>
         [HttpGet]
+        [ProducesResponseType(200)]
         public async Task<IActionResult> GetAll()
         {
             List<Department> department = await departmentService.GetDepartments()
@@ -57,6 +60,9 @@ namespace LGDShop.API.Controllers.V1
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}", Name = "GetDepartmentById")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
         public async Task<IActionResult> GetById(int? id)
         {
             if (id == null)
@@ -66,7 +72,7 @@ namespace LGDShop.API.Controllers.V1
             Department department = await departmentService.FindDepartmentAsync(id);
             if (department == null)
             {
-                return ModelNotFound(logger, id);
+                return ModelNotFound(logger.Here(), id);
             }
             return Ok(department);
         }
@@ -79,6 +85,7 @@ namespace LGDShop.API.Controllers.V1
         /// <response code="201">new department has been created successfully</response>
         [HttpPost]
         [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
         public async Task<IActionResult> Create([FromBody] DepartmentCreateRequest requestModel)
         {
             //map to entity
@@ -98,6 +105,7 @@ namespace LGDShop.API.Controllers.V1
         /// <response code="204">department has been updated successfully</response>
         [HttpPut]
         [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
         public async Task<IActionResult> Update([FromBody] DepartmentUpdateRequest requestModel)
         {
             Department department = await departmentService.FindDepartmentAsync(requestModel.Id);
@@ -120,8 +128,12 @@ namespace LGDShop.API.Controllers.V1
         /// <param name="id"></param>
         /// <returns></returns>
         /// <response code="200">department has been deleted successfully</response>
+        /// <response code="400">invalid request</response>
+        /// <response code="404">model not found</response>
         [HttpDelete("{id}")]
         [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -149,6 +161,39 @@ namespace LGDShop.API.Controllers.V1
             //map to delete response
             EntityDeleteResponse entityDeleteResponse = DepartmentMapper.MapFromDepartmentToEntityDeleteResponse(department);
             return Ok(entityDeleteResponse);
+        }
+
+        /// <summary>
+        /// Get first 10 employees in this department
+        /// </summary>
+        /// <param name="id">department id</param>
+        /// <returns></returns>
+        [HttpGet("{id}/employees")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> GetAllEmployees(int? id)
+        {
+            if (id == null)
+            {
+                return IdNotProvidedBadRequest(logger.Here());
+            }
+            Department department = await departmentService.FindDepartmentAsync(id);
+            if (department == null)
+            {
+                return ModelNotFound(logger.Here(), id);
+            }
+
+            var employees = await employeeService.GetEmployeesForDepartment(department.DepartmentId)
+                                                 .Include(emp => emp.Department)
+                                                 .Include(emp => emp.Position)
+                                                 .AsNoTracking()
+                                                 .Take(10)
+                                                 .ToListAsync();
+            logger.Here().Information($"Get employees for department: '{department.Name}' successfully");
+            //map to response
+            EmployeeGetAllResponse employeeGetAllResponse = EmployeeMapper.MapFromEmployeesToEmployeeGetAllResponse(employees);
+            return Ok(employeeGetAllResponse);
         }
     }
 }
