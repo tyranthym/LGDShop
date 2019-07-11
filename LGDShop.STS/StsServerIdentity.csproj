@@ -5,6 +5,12 @@
     <UserSecretsId>b9ac1411-b68d-4d16-9ca5-7229c4a0012c</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
+    <EmbeddedResource Remove="Resources\SharedResource.de-CH.resx" />
+    <EmbeddedResource Remove="Resources\SharedResource.de-DE.resx" />
+    <EmbeddedResource Remove="Resources\SharedResource.fr-FR.resx" />
+    <EmbeddedResource Remove="Resources\SharedResource.it-IT.resx" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="BuildBundlerMinifier" Version="2.9.406" />
     <PackageReference Include="IdentityServer4" Version="2.4.0" />

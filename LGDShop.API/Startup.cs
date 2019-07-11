@@ -91,8 +91,8 @@ namespace LGDShop.API
 
 
             services.AddCors(options => options.AddPolicy("SpaOnly", b =>
-                        b.WithOrigins("http://localhost:4300",
-                                      "https://localhost:4300")
+                        b.WithOrigins("http://localhost:4200",
+                                      "https://localhost:4200")
                         .AllowAnyMethod()
                         .AllowAnyHeader()));
 
